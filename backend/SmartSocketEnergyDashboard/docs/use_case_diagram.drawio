@@ -1,0 +1,37 @@
+<mxfile host="Electron" modified="2024-02-25T12:20:18.766Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="CfYDndhlQ-uOj7NIQdtu" version="23.1.5" type="device">
+  <diagram name="Page-1" id="W2q6WpGCYp-KT2xOcNLl">
+    <mxGraphModel dx="714" dy="843" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="iF-fxGYr2On2vQUhdCNM-6" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F0EDA1;fontColor=#000000;strokeColor=#BD7000;gradientColor=none;" vertex="1" parent="1">
+          <mxGeometry x="230" y="60" width="330" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="iF-fxGYr2On2vQUhdCNM-1" value="Actor" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="130" y="250" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="iF-fxGYr2On2vQUhdCNM-4" value="Display smart socket data" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="335" y="100" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="iF-fxGYr2On2vQUhdCNM-5" value="Manage smart socket" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="335" y="270" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="iF-fxGYr2On2vQUhdCNM-7" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#000000;" edge="1" parent="1" target="iF-fxGYr2On2vQUhdCNM-5">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="180" y="300" as="sourcePoint" />
+            <mxPoint x="340" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="iF-fxGYr2On2vQUhdCNM-8" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#000000;" edge="1" parent="1" target="iF-fxGYr2On2vQUhdCNM-4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="180" y="290" as="sourcePoint" />
+            <mxPoint x="340" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="iF-fxGYr2On2vQUhdCNM-9" value="Smart Socket Energy Dashboard" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="230" y="30" width="200" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
