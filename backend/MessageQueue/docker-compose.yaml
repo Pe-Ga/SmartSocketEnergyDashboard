@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+  hivemq:
+    image: hivemq/hivemq4
+    container_name: hivemq
+    ports:
+      - "1883:1883"
+      - "8080:8080"  # HiveMQ Control Center
