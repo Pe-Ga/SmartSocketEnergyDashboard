@@ -1,8 +1,5 @@
 package at.technikum.SmartSocketEnergyDashboard.services;
 
-import at.technikum.SmartSocketEnergyDashboard.models.SmartSocket;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +8,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-
-import static at.technikum.SmartSocketEnergyDashboard.services.JsonParser.parseEnergyData;
 
 @Service
 public class SmartSocketService {
