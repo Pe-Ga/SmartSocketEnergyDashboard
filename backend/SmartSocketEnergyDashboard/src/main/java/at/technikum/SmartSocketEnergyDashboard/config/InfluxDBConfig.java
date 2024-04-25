@@ -1,7 +1,8 @@
 package at.technikum.SmartSocketEnergyDashboard.config;
 
-import org.influxdb.InfluxDB;
-import org.influxdb.InfluxDBFactory;
+
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.client.InfluxDBClientFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,19 +11,20 @@ import org.springframework.context.annotation.Configuration;
 public class InfluxDBConfig {
 
     @Value("${influxdb.url}")
-    private String influxDbUrl;
+    private String url;
 
-    @Value("${influxdb.username}")
-    private String influxDbUsername;
+    @Value("${influxdb.org}")
+    private String org;
 
-    @Value("${influxdb.password}")
-    private String influxDbPassword;
+    @Value("${influxdb.token}")
+    private String token;
+
+    @Value("${influxdb.bucket}")
+    private String bucket;
 
     @Bean
-    public InfluxDB influxDB() {
-        InfluxDB influxDB = InfluxDBFactory.connect(influxDbUrl, influxDbUsername, influxDbPassword);
-        // You can add further customization of InfluxDB connection here if needed
-        return influxDB;
+    public InfluxDBClient influxDBClient() {
+        return InfluxDBClientFactory.create(url, token.toCharArray(), org, bucket);
     }
 
 }
