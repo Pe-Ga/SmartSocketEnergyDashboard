@@ -1,45 +1,64 @@
 package at.technikum.SmartSocketEnergyDashboard.services;
 
-import io.micrometer.core.instrument.MeterRegistry;
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.client.WriteApiBlocking;
+import com.influxdb.client.domain.WritePrecision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 
 @Service
 public class SmartSocketService {
 
-    Logger logger = LoggerFactory.getLogger(SmartSocketService.class);
+    private static final Logger logger = LoggerFactory.getLogger(SmartSocketService.class);
 
-    private final String endpointUrl = "http://192.168.0.57/cm?cmnd=EnergyTotal";
-
+    private final String endpointUrl;
     private final RestTemplate restTemplate;
-    private final MeterRegistry meterRegistry;
+    private final WriteApiBlocking writeApi;
 
-    public SmartSocketService(RestTemplate restTemplate, MeterRegistry meterRegistry) {
+    private final String bucket;
+    private final String org;
+
+
+    public SmartSocketService(RestTemplate restTemplate, InfluxDBClient influxDBClient,
+                              @Value("${influxdb.bucket}") String bucket,
+                              @Value("${influxdb.org}") String org,
+                              @Value("${smartsocket.endpointUrl}") String endpointUrl) {
         this.restTemplate = restTemplate;
-        this.meterRegistry = meterRegistry;
+        this.endpointUrl = endpointUrl;
+        this.writeApi = influxDBClient.getWriteApiBlocking();
+        this.bucket = bucket;
+        this.org = org;
     }
 
     @Scheduled(fixedRate = 60000)
-    public void callTasmotaEndpoint() throws Exception {
+    public void getTotalEnergyAndStoreInDB() {
         try {
             String response = restTemplate.getForObject(endpointUrl, String.class);
             double totalEnergy = JsonParser.extractTotalFromJson(response);
             logger.info("Total Energy: {}", totalEnergy);
+
+            String data = String.format("tasmotaBackend energyTotal=%.3f", totalEnergy);
+            logger.info(data);
+
+            writeApi.writeRecord(bucket, org, WritePrecision.NS, data);
+
+        } catch (ResourceAccessException e) {
+            logger.error("Error connecting to the endpoint: {}", e.getMessage());
+        } catch (HttpServerErrorException | HttpClientErrorException e) {
+            logger.error("HTTP error when accessing the endpoint: {}", e.getMessage());
         } catch (Exception e) {
             logger.error("Error processing JSON response: {}", e.getMessage());
         }
-
     }
 
-    private void reportEnergyMetrics(double totalEnergy) {
-        // Register a gauge metric for total energy with Micrometer
-        meterRegistry.gauge("energy.total", totalEnergy);
-        logger.info("Total Energy reported: {}", totalEnergy);
-    }
-
+    // TODO implement commands: sleep, status, state
 }
