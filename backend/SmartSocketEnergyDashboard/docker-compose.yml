@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   influxdb:
-    image: influxdb:latest
+    image: influxdb:2.7.6
     restart: always
     ports:
       - "8086:8086"
@@ -11,8 +11,18 @@ services:
       INFLUXDB_USER: peter
       INFLUXDB_USER_PASSWORD: peter123
     volumes:
-      - influxdb-data:/var/lib/influxdb
+      - influxdb-data:/var/lib/influxdb2
+
+  grafana:
+    image: grafana/grafana-oss
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
 
 volumes:
   influxdb-data:
+    driver: local
+  grafana-data:
     driver: local
