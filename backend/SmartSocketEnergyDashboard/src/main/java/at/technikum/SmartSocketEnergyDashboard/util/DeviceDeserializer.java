@@ -1,5 +1,6 @@
-package at.technikum.SmartSocketEnergyDashboard.dtos;
+package at.technikum.SmartSocketEnergyDashboard.util;
 
+import at.technikum.SmartSocketEnergyDashboard.dtos.DeviceDTO;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class DeviceDeserializer extends JsonDeserializer<DeviceDTO> {
 
@@ -18,7 +20,11 @@ public class DeviceDeserializer extends JsonDeserializer<DeviceDTO> {
     public DeviceDTO deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
 
-        String name = node.get("Status").get("DeviceName").asText();
+        String name = Optional.ofNullable(node.get("Status"))
+                .map(n -> n.get("DeviceName"))
+                .map(JsonNode::asText)
+                .filter(s -> !s.isEmpty())
+                .orElse("Default");
 
         String total = node.get("StatusSNS")
                         .get("ENERGY")
