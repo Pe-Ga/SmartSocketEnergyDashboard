@@ -22,5 +22,23 @@ public class DeviceDTO {
     private double factor;
     private double voltage;
     private double current;
+    private boolean isPowerOn;
 
+
+    @Override
+    public String toString() {
+        return "DeviceDTO{" +
+                "name='" + name + '\'' +
+                ", energyTotal=" + energyTotal +
+                ", energyYesterday=" + energyYesterday +
+                ", energyToday=" + energyToday +
+                ", power=" + power +
+                ", apparentPower=" + apparentPower +
+                ", reactivePower=" + reactivePower +
+                ", factor=" + factor +
+                ", voltage=" + voltage +
+                ", current=" + current +
+                ", isPowerOn=" + isPowerOn +
+                '}';
+    }
 }
