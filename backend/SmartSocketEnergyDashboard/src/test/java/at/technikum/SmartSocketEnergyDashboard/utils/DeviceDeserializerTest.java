@@ -36,6 +36,8 @@ class DeviceDeserializerTest {
         DeviceDTO parsedDeviceDto = mapper.readValue(statusResponseFile, DeviceDTO.class);
 
         assertEquals("Tasmota", parsedDeviceDto.getName());
+        assertEquals("tasmota-FA3AE2-6882", parsedDeviceDto.getHostName());
+        assertEquals("192.168.0.57", parsedDeviceDto.getIpAddress());
         assertEquals(2.701, parsedDeviceDto.getEnergyTotal());
         assertEquals(0.184, parsedDeviceDto.getEnergyYesterday());
         assertEquals(0.104, parsedDeviceDto.getEnergyToday());
