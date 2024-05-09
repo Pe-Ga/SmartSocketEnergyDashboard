@@ -13,6 +13,8 @@ import lombok.Setter;
 public class DeviceDTO {
 
     private String name;
+    private String hostName;
+    private String ipAddress;
     private double energyTotal;
     private double energyYesterday;
     private double energyToday;
@@ -24,11 +26,12 @@ public class DeviceDTO {
     private double current;
     private boolean isPowerOn;
 
-
     @Override
     public String toString() {
         return "DeviceDTO{" +
                 "name='" + name + '\'' +
+                ", hostName='" + hostName + '\'' +
+                ", ipAddress='" + ipAddress + '\'' +
                 ", energyTotal=" + energyTotal +
                 ", energyYesterday=" + energyYesterday +
                 ", energyToday=" + energyToday +
@@ -41,4 +44,6 @@ public class DeviceDTO {
                 ", isPowerOn=" + isPowerOn +
                 '}';
     }
+
 }
+
