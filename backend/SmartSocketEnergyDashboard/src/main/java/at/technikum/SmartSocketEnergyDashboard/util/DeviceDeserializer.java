@@ -1,7 +1,6 @@
 package at.technikum.SmartSocketEnergyDashboard.util;
 
 import at.technikum.SmartSocketEnergyDashboard.dtos.DeviceDTO;
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -17,7 +16,7 @@ public class DeviceDeserializer extends JsonDeserializer<DeviceDTO> {
     private static final Logger logger = LoggerFactory.getLogger(DeviceDeserializer.class);
 
     @Override
-    public DeviceDTO deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
+    public DeviceDTO deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
 
         String name = Optional.ofNullable(node.get("Status"))
