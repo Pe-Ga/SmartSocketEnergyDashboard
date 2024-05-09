@@ -24,7 +24,19 @@ public class DeviceDeserializer extends JsonDeserializer<DeviceDTO> {
                 .map(n -> n.get("DeviceName"))
                 .map(JsonNode::asText)
                 .filter(s -> !s.isEmpty())
-                .orElse("Default");
+                .orElse("DEFAULT NAME");
+
+        String hostName = Optional.ofNullable(node.get("StatusNET"))
+                .map(n -> n.get("Hostname"))
+                .map(JsonNode::asText)
+                .filter(s -> !s.isEmpty())
+                .orElse("DEFAULT Hostname");
+
+        String ipAddress = Optional.ofNullable(node.get("StatusNET"))
+                .map(n -> n.get("IPAddress"))
+                .map(JsonNode::asText)
+                .filter(s -> !s.isEmpty())
+                .orElse("DEFAULT IPADDRESSE");
 
         String total = node.get("StatusSNS")
                         .get("ENERGY")
@@ -69,6 +81,8 @@ public class DeviceDeserializer extends JsonDeserializer<DeviceDTO> {
         DeviceDTO device = new DeviceDTO();
 
         device.setName(name);
+        device.setHostName(hostName);
+        device.setIpAddress(ipAddress);
         device.setEnergyTotal(Double.parseDouble(total));
         device.setEnergyYesterday(Double.parseDouble(energyYesterday));
         device.setEnergyToday(Double.parseDouble(energyToday));
