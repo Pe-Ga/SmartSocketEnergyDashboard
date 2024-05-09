@@ -1,11 +1,14 @@
 package at.technikum.SmartSocketEnergyDashboard.services;
 
+import at.technikum.SmartSocketEnergyDashboard.dtos.DeviceDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.WriteApiBlocking;
 import com.influxdb.client.domain.WritePrecision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -27,29 +30,30 @@ public class SmartSocketService {
     private final String bucket;
     private final String org;
 
+    private final ObjectMapper objectMapper;
 
+    @Autowired
     public SmartSocketService(RestTemplate restTemplate, InfluxDBClient influxDBClient,
                               @Value("${influxdb.bucket}") String bucket,
                               @Value("${influxdb.org}") String org,
-                              @Value("${smartsocket.endpointUrl}") String endpointUrl) {
+                              @Value("${smartsocket.endpointUrl}") String endpointUrl, ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.endpointUrl = endpointUrl;
         this.writeApi = influxDBClient.getWriteApiBlocking();
         this.bucket = bucket;
         this.org = org;
+        this.objectMapper = objectMapper;
     }
 
     @Scheduled(fixedRate = 60000)
     public void getTotalEnergyAndStoreInDB() {
         try {
             String response = restTemplate.getForObject(endpointUrl, String.class);
-            double totalEnergy = JsonParser.extractTotalFromJson(response);
-            logger.info("Total Energy: {}", totalEnergy);
+            DeviceDTO deviceDTO = objectMapper.readValue(response, DeviceDTO.class);
+            logger.info(deviceDTO.toString());
 
-            String data = String.format("tasmotaBackend energyTotal=%.3f", totalEnergy);
-            logger.info(data);
 
-            writeApi.writeRecord(bucket, org, WritePrecision.NS, data);
+
 
         } catch (ResourceAccessException e) {
             logger.error("Error connecting to the endpoint: {}", e.getMessage());
@@ -59,6 +63,4 @@ public class SmartSocketService {
             logger.error("Error processing JSON response: {}", e.getMessage());
         }
     }
-
-    // TODO implement commands: sleep, status, state
 }
