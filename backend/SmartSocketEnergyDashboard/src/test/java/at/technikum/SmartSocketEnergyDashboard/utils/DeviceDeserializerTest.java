@@ -1,32 +1,39 @@
 package at.technikum.SmartSocketEnergyDashboard.utils;
 
 import at.technikum.SmartSocketEnergyDashboard.dtos.DeviceDTO;
+import at.technikum.SmartSocketEnergyDashboard.util.DeviceDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.Resource;
 
+import java.io.File;
 import java.io.IOException;
 import static at.technikum.SmartSocketEnergyDashboard.util.DeviceDeserializer.convertPowerStatusToBoolean;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+
 class DeviceDeserializerTest {
 
-    @Value("classpath:tasmota_status_response.json")
-    private Resource statusResponse;
+    private ObjectMapper mapper;
+    private File statusResponseFile;
 
-    @Autowired
-    private ApplicationContext context;
+    @BeforeEach
+    void setUp() {
+        mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(DeviceDTO.class, new DeviceDeserializer());
+        mapper.registerModule(module);
+
+        String jsonFilePath = "src/test/resources/tasmota_status_response.json";
+        statusResponseFile = new File(jsonFilePath);
+        assertTrue(statusResponseFile.exists());
+    }
 
     @Test
     void deserializeDeviceNameFromJsonResponse() throws IOException {
 
-        ObjectMapper mapper = context.getBean(ObjectMapper.class);
-        DeviceDTO parsedDeviceDto = mapper.readValue(statusResponse.getFile(), DeviceDTO.class);
+        DeviceDTO parsedDeviceDto = mapper.readValue(statusResponseFile, DeviceDTO.class);
 
         assertEquals("Tasmota", parsedDeviceDto.getName());
         assertEquals(2.701, parsedDeviceDto.getEnergyTotal());

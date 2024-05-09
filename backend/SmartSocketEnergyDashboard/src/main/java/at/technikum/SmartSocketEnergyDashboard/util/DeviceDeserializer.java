@@ -66,7 +66,6 @@ public class DeviceDeserializer extends JsonDeserializer<DeviceDTO> {
                 .get("POWER")
                 .asText();
 
-
         DeviceDTO device = new DeviceDTO();
 
         device.setName(name);
