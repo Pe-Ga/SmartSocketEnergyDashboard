@@ -15,10 +15,6 @@ public class Config {
         return new RestTemplate();
     }
 
-    @Bean
-    public DeviceFullNameGenerator fullNameGenerator() {
-        return new DeviceFullNameGenerator();
-    }
 
     @Bean
     public DeviceDataLogger deviceDataLogger() {
