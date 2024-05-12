@@ -14,6 +14,7 @@ import static at.technikum.SmartSocketEnergyDashboard.util.DeviceFullNameGenerat
 @NoArgsConstructor
 public class DeviceDTO {
 
+    private Long id;
     private String name;
     private String hostName;
     private String ipAddress;
