@@ -1,7 +1,7 @@
 package at.technikum.SmartSocketEnergyDashboard.controllers;
 
+import at.technikum.SmartSocketEnergyDashboard.dtos.DeviceDTO;
 import at.technikum.SmartSocketEnergyDashboard.entities.DeviceEntity;
-import at.technikum.SmartSocketEnergyDashboard.models.Device;
 import at.technikum.SmartSocketEnergyDashboard.services.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,20 +24,36 @@ public class DeviceController {
     }
 
     @PostMapping
-    public ResponseEntity<DeviceEntity> registerDevice(@RequestBody DeviceEntity deviceEntity) {
-        DeviceEntity savedDevice;
+    public ResponseEntity<?> registerDevice(@RequestBody DeviceDTO dto) {
+        DeviceDTO savedDTO;
+
         try {
-            savedDevice = deviceService.registerDevice(deviceEntity);
+            // Save the device and receive the updated DTO
+            savedDTO = deviceService.saveDevice(dto);
+
+            // Attempt to update the device name on the device
+            boolean nameUpdated = deviceService.updateDeviceName(savedDTO.getIpAddress(), savedDTO.getName());
+            if (!nameUpdated) {
+                logger.error("Failed to update device name on the device");
+                return ResponseEntity.internalServerError().body("Failed to update device name on the device");
+            }
         } catch (Exception e) {
-            logger.error("Error registering device", e);
+            // Log the error and return an Internal Server Error response
+            logger.error("Error registering or updating device", e);
             return ResponseEntity.internalServerError().build();
         }
+
+        // Build the URI for the newly created resource
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(savedDevice.getId())
+                .buildAndExpand(savedDTO.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(savedDevice);
+
+        // Return the response entity with the location header and the saved DTO
+        return ResponseEntity.created(location).body(savedDTO);
     }
+
+
 
     @GetMapping
     public ResponseEntity<List<DeviceEntity>> getAllDevices() {
