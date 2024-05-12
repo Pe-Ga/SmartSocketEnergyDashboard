@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class DeviceDataScheduler {
 
@@ -14,35 +16,35 @@ public class DeviceDataScheduler {
     private final DeviceDataService deviceDataService;
     private final DeviceDataLogger deviceDataLogger;
     private final DataPointService dataPointService;
+    private final DeviceManagerService deviceManagerService;
 
 
-    public DeviceDataScheduler(DeviceDataService deviceDataService, DeviceDataLogger deviceDataLogger, DataPointService dataPointService) {
+    public DeviceDataScheduler(DeviceDataService deviceDataService, DeviceDataLogger deviceDataLogger, DataPointService dataPointService, DeviceManagerService deviceManagerService) {
         this.deviceDataService = deviceDataService;
         this.deviceDataLogger = deviceDataLogger;
         this.dataPointService = dataPointService;
+        this.deviceManagerService = deviceManagerService;
     }
 
     @Scheduled(fixedRate = 60000)
     public void scheduleDeviceDataCollection() {
 
-        // TODO
+        List<DeviceDTO> devices = deviceManagerService.getAllDevices();
 
-        /*
+        if (devices.isEmpty()) {
+            logger.info("No devices to process at this time.");
+        }
 
-        smthing like this
-        List<DeviceDTO> devices = deviceDataService.fetchAllDeviceData();
-            for (DeviceDTO deviceDTO : devices) {
-                deviceDataLogger.logDeviceData(deviceDTO);
-                dataPointService.saveDeviceData(deviceDTO);
-         */
-        logger.info("{}started working . . .", getClass().getName());
+        for (DeviceDTO dto : devices) {
+            logger.info("{}started working . . .", getClass().getName());
 
-        try {
-            DeviceDTO deviceDTO = deviceDataService.fetchDeviceData();
-            deviceDataLogger.logDeviceData(deviceDTO);
-            dataPointService.saveDeviceData(deviceDTO);
-        } catch (Exception e) {
-            logger.error("Error in scheduled task: {}", e.getMessage());
+            try {
+                DeviceDTO fetchedData = deviceDataService.fetchDeviceData(dto.getIpAddress());
+                deviceDataLogger.logDeviceData(fetchedData);
+                dataPointService.saveDeviceData(fetchedData);
+            } catch (Exception e) {
+                logger.error("Error in scheduled task: {}", e.getMessage());
+            }
         }
     }
 

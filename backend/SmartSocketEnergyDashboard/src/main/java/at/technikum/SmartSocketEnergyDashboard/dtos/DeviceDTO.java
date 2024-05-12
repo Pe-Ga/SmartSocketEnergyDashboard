@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import static at.technikum.SmartSocketEnergyDashboard.util.DeviceFullNameGenerator.generateFullDeviceName;
-
 
 @Getter
 @Setter
@@ -32,7 +30,7 @@ public class DeviceDTO {
     @Override
     public String toString() {
         return "DeviceDTO{" +
-                "name='" + generateFullDeviceName(name, ipAddress) + '\'' +
+                "name='" + name + '\'' +
                 ", hostName='" + hostName + '\'' +
                 ", ipAddress='" + ipAddress + '\'' +
                 ", energyTotal=" + energyTotal +

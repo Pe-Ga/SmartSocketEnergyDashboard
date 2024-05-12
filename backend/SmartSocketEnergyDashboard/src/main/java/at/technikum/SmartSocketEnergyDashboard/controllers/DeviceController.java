@@ -2,6 +2,7 @@ package at.technikum.SmartSocketEnergyDashboard.controllers;
 
 import at.technikum.SmartSocketEnergyDashboard.dtos.DeviceDTO;
 import at.technikum.SmartSocketEnergyDashboard.entities.DeviceEntity;
+import at.technikum.SmartSocketEnergyDashboard.services.DeviceManagerService;
 import at.technikum.SmartSocketEnergyDashboard.services.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,19 +18,24 @@ import java.util.List;
 public class DeviceController {
 
     private final DeviceService deviceService;
+    private final DeviceManagerService deviceManagerService;
     private static final Logger logger = LoggerFactory.getLogger(DeviceController.class);
 
-    public DeviceController(DeviceService deviceService) {
+    public DeviceController(DeviceService deviceService, DeviceManagerService deviceManagerService) {
         this.deviceService = deviceService;
+        this.deviceManagerService = deviceManagerService;
     }
 
     @PostMapping
-    public ResponseEntity<?> registerDevice(@RequestBody DeviceDTO dto) {
-        DeviceDTO savedDTO;
+    public ResponseEntity<?> registerDevice(@RequestParam String name, @RequestParam String ipAddress) {
+        DeviceDTO savedDTO = new DeviceDTO();
+        savedDTO.setName(name);
+        savedDTO.setIpAddress(ipAddress);
 
         try {
             // Save the device and receive the updated DTO
-            savedDTO = deviceService.saveDevice(dto);
+            savedDTO = deviceService.saveDevice(savedDTO);
+            deviceManagerService.registerDevice(savedDTO);
 
             // Attempt to update the device name on the device
             boolean nameUpdated = deviceService.updateDeviceName(savedDTO.getIpAddress(), savedDTO.getName());
@@ -52,7 +58,6 @@ public class DeviceController {
         // Return the response entity with the location header and the saved DTO
         return ResponseEntity.created(location).body(savedDTO);
     }
-
 
 
     @GetMapping

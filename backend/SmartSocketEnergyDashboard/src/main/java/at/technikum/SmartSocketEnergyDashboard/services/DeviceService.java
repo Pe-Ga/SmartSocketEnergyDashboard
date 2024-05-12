@@ -2,6 +2,7 @@ package at.technikum.SmartSocketEnergyDashboard.services;
 
 import at.technikum.SmartSocketEnergyDashboard.dtos.DeviceDTO;
 import at.technikum.SmartSocketEnergyDashboard.entities.DeviceEntity;
+import at.technikum.SmartSocketEnergyDashboard.models.Device;
 import at.technikum.SmartSocketEnergyDashboard.repositories.DeviceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +21,11 @@ public class DeviceService {
 
     private static final Logger logger = LoggerFactory.getLogger(DeviceService.class);
     private final DeviceRepository deviceRepository;
-    private final DeviceRegistryImpl deviceRegistry;
 
-    public DeviceService(DeviceRepository deviceRepository, DeviceRegistryImpl deviceRegistry) {
+
+    public DeviceService(DeviceRepository deviceRepository) {
         this.deviceRepository = deviceRepository;
-        this.deviceRegistry = deviceRegistry;
+
     }
 
     public DeviceDTO saveDevice(DeviceDTO deviceDTO) {
@@ -34,7 +35,6 @@ public class DeviceService {
     }
 
 
-    // TODO convert Entity to DTO go to Scheduler
     public List<DeviceEntity> getAllDevices() {
         return deviceRepository.findAll();
     }
@@ -59,11 +59,19 @@ public class DeviceService {
         deviceEntity.setIpAddress(deviceDTO.getIpAddress());
         return deviceEntity;
     }
+    public DeviceEntity convertToEntity(Device device) {
+        // Convert Device model to Entity
+        DeviceEntity deviceEntity = new DeviceEntity();
+        deviceEntity.setName(device.getName());
+        deviceEntity.setIpAddress(device.getIpAddress());
+        return deviceEntity;
+    }
 
     public boolean updateDeviceName(String ipAddress, String newName) {
+        String encodeSpace = "%20";
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(String.format("%s/cm?cmnd=DeviceName %s",ipAddress, newName)))
+                .uri(URI.create(String.format("http://%s/cm?cmnd=DeviceName%s%s",ipAddress, encodeSpace, newName)))
                 .POST(HttpRequest.BodyPublishers.ofString(newName))
                 .build();
 
