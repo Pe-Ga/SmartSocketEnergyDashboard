@@ -39,12 +39,6 @@ public class DeviceService {
         return deviceRepository.findAll();
     }
 
-    public List<DeviceDTO> getAllDeviceDTOs() {
-        return deviceRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
     public DeviceDTO convertToDTO(DeviceEntity entity) {
         DeviceDTO dto = new DeviceDTO();
         dto.setName(entity.getName());
@@ -57,13 +51,6 @@ public class DeviceService {
         DeviceEntity deviceEntity = new DeviceEntity();
         deviceEntity.setName(deviceDTO.getName());
         deviceEntity.setIpAddress(deviceDTO.getIpAddress());
-        return deviceEntity;
-    }
-    public DeviceEntity convertToEntity(Device device) {
-        // Convert Device model to Entity
-        DeviceEntity deviceEntity = new DeviceEntity();
-        deviceEntity.setName(device.getName());
-        deviceEntity.setIpAddress(device.getIpAddress());
         return deviceEntity;
     }
 
