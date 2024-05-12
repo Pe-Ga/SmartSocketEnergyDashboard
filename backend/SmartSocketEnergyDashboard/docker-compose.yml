@@ -1,6 +1,23 @@
 version: '3.1'
 
 services:
+  device-db:
+    image: postgres:15.1
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: device-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - device-db:/var/lib/postgresql/data
+  adminer:
+    image: adminer:4.8.1
+    restart: always
+    command: php -S 0.0.0.0:8080 -t /var/www/html
+    ports:
+      - "8080:8080"
   influxdb:
     image: influxdb:2.7.6
     restart: always
@@ -22,6 +39,8 @@ services:
       - grafana-data:/var/lib/grafana
 
 volumes:
+  device-db:
+    driver: local
   influxdb-data:
     driver: local
   grafana-data:

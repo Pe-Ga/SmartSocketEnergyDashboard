@@ -9,11 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SmartSocket {
-
-
-    private double energyTotal;
-    private double energyToday;
-    private double energyYesterday;
-
+public class Device {
+    private String name;
+    private String ipAddress;
 }
