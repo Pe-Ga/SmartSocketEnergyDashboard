@@ -17,7 +17,7 @@ services:
     restart: always
     command: php -S 0.0.0.0:8080 -t /var/www/html
     ports:
-      - "8080:8080"
+      - "8082:8080"
   influxdb:
     image: influxdb:2.7.6
     restart: always
