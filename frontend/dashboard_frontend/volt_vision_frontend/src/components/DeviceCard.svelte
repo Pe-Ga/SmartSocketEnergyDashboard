@@ -5,17 +5,18 @@
 </script>
 
 <div class="device-card">
+    <img src={imageUrl} alt={title} class="device-image"/>
     <div class="device-info">
         <h3>{device.name}</h3>
         <p>{device.ipAddress}</p>
+        <button class="configure-button">Configure</button>
     </div>
-    <img src={imageUrl} alt={title} class="device-image"/>
+
 </div>
 
 <style>
     .device-card {
-        display: flex; /* Use flexbox for layout */
-        align-items: center; /* Vertically center the items */
+        align-items: center;
         border: 1px solid #ccc;
         border-radius: 0.3em;
         padding: 0.5em;
@@ -23,13 +24,18 @@
         background: white;
     }
 
-    .device-image {
-        width: auto; /* Let the image adjust its width */
-        height: 1.5em; /* Set the height to match the header */
-        margin-left: 1em; /* Adjust the spacing between the image and text */
+    img {
+        width: 80px;
+        height: 70px;
     }
 
     .device-info {
-        flex-grow: 1; /* Allow the text to grow and fill available space */
+        flex-grow: 1;
     }
+
+    .configure-button {
+        margin-top: 0.5em; /* Space above the button */
+        width: 100%;
+    }
+
 </style>
