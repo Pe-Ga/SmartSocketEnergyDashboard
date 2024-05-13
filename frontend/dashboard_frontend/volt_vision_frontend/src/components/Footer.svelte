@@ -7,8 +7,9 @@
 
 
 <style>
- h2 {
-    font-family: 'Courier New', Courier, monospace;
-    font-style: italic;
- }
+
+     h2 {
+        font-family: 'Courier New', Courier, monospace;
+        font-style: italic;
+     }
 </style>

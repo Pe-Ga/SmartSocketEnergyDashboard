@@ -1,32 +1,28 @@
-<script>
-    //import logo from "public/logo.png"
-</script>
-
-<header>
-    <!--<img alt="logo" src="https://picsum.photos/200/300" class="brand-logo">-->
-    <h1>Volt Vision Dashboard</h1>
-</header>
-
 
 <style>
-
     header {
-        display: flex;
-        flex-direction: row;
-        align-items: start;
-        justify-content: flex-start;
-        padding: 1rem 0.75rem
+        background-color: #333;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
     }
-
-    h1 {
-        padding-left: 10rem;
-        font-family: 'Courier New', Courier, monospace;
-        font-style: italic; 
+    nav a {
+        color: white;
+        padding: 0 15px;
+        text-decoration: none;
+        font-size: 18px;
     }
-
-    .brand-logo {
-        background-color: white;
-        height: 5rem;   
+    nav a:hover {
+        text-decoration: underline;
     }
-
 </style>
+
+<header>
+    <h1>Energy Portal</h1>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+    </nav>
+</header>
