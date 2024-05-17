@@ -24,9 +24,9 @@
     .body {
         display: grid;
         grid-template-areas:
-        'header header header'
-        'aside main main'
-        'footer footer footer';
+        'header header header header'
+        'aside main main main'
+        'footer footer footer footer';
         gap: 0.5em;
     }
 

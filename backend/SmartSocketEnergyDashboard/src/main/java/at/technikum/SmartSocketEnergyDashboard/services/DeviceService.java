@@ -1,11 +1,12 @@
 package at.technikum.SmartSocketEnergyDashboard.services;
 
-import at.technikum.SmartSocketEnergyDashboard.dtos.DeviceDTO;
 import at.technikum.SmartSocketEnergyDashboard.entities.DeviceEntity;
-import at.technikum.SmartSocketEnergyDashboard.models.Device;
 import at.technikum.SmartSocketEnergyDashboard.repositories.DeviceRepository;
+import at.technikum.SmartSocketEnergyDashboard.exceptions.DeviceRegistrationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -14,51 +15,57 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class DeviceService {
 
     private static final Logger logger = LoggerFactory.getLogger(DeviceService.class);
+    private static final String ENCODE_SPACE = "%20";
     private final DeviceRepository deviceRepository;
+    private final DeviceConverter deviceConverter;
 
 
-    public DeviceService(DeviceRepository deviceRepository) {
+    public DeviceService(DeviceRepository deviceRepository, DeviceConverter deviceConverter) {
         this.deviceRepository = deviceRepository;
-
+        this.deviceConverter = deviceConverter;
     }
 
-    public DeviceDTO saveDevice(DeviceDTO deviceDTO) {
-        DeviceEntity deviceEntity = convertToEntity(deviceDTO);
-        DeviceEntity savedEntity = deviceRepository.save(deviceEntity);
-        return convertToDTO(savedEntity);
+    @CacheEvict(value="devices", allEntries = true)
+    public DeviceEntity saveDevice(DeviceEntity deviceEntity) {
+        return deviceRepository.save(deviceEntity);
+    }
+
+    @CacheEvict(value="devices", allEntries = true)
+    public void deleteDeviceById(Long id) {
+        deviceRepository.deleteById(id);
     }
 
 
+    @Cacheable("devices")
     public List<DeviceEntity> getAllDevices() {
         return deviceRepository.findAll();
     }
 
-    public DeviceDTO convertToDTO(DeviceEntity entity) {
-        DeviceDTO dto = new DeviceDTO();
-        dto.setName(entity.getName());
-        dto.setIpAddress(entity.getIpAddress());
-        return dto;
-    }
-
-    public DeviceEntity convertToEntity(DeviceDTO deviceDTO) {
-        // Convert DTO to Entity
-        DeviceEntity deviceEntity = new DeviceEntity();
-        deviceEntity.setName(deviceDTO.getName());
-        deviceEntity.setIpAddress(deviceDTO.getIpAddress());
-        return deviceEntity;
+    public DeviceEntity registerDevice(DeviceEntity deviceEntity) throws DeviceRegistrationException {
+        try {
+            var device = saveDevice(deviceEntity);
+            var deviceDTO = deviceConverter.mapDeviceEntityToDeviceDTO(device);
+            boolean nameUpdated = updateDeviceName(deviceDTO.getIpAddress(), deviceDTO.getName());
+            if (!nameUpdated) {
+                logger.error("Failed to update device name on the device");
+                throw new DeviceRegistrationException("Failed to update device name on the device");
+            }
+            return device;
+        } catch (Exception e) {
+            logger.error("Error registering device", e);
+            throw new DeviceRegistrationException("Error registering device", e);
+        }
     }
 
     public boolean updateDeviceName(String ipAddress, String newName) {
-        String encodeSpace = "%20";
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(String.format("http://%s/cm?cmnd=DeviceName%s%s",ipAddress, encodeSpace, newName)))
+                .uri(URI.create(String.format("http://%s/cm?cmnd=DeviceName%s%s",ipAddress, ENCODE_SPACE, newName)))
                 .POST(HttpRequest.BodyPublishers.ofString(newName))
                 .build();
 
@@ -70,4 +77,5 @@ public class DeviceService {
             return false;
         }
     }
+
 }

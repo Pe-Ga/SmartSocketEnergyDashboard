@@ -1,16 +1,16 @@
 package at.technikum.SmartSocketEnergyDashboard.controllers;
 
-import at.technikum.SmartSocketEnergyDashboard.dtos.DeviceDTO;
 import at.technikum.SmartSocketEnergyDashboard.entities.DeviceEntity;
-import at.technikum.SmartSocketEnergyDashboard.services.DeviceManagerService;
+import at.technikum.SmartSocketEnergyDashboard.exceptions.DeviceRegistrationException;
+import at.technikum.SmartSocketEnergyDashboard.models.Device;
+import at.technikum.SmartSocketEnergyDashboard.services.DeviceConverter;
 import at.technikum.SmartSocketEnergyDashboard.services.DeviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -18,47 +18,31 @@ import java.util.List;
 public class DeviceController {
 
     private final DeviceService deviceService;
-    private final DeviceManagerService deviceManagerService;
+    private final DeviceConverter deviceConverter;
     private static final Logger logger = LoggerFactory.getLogger(DeviceController.class);
 
-    public DeviceController(DeviceService deviceService, DeviceManagerService deviceManagerService) {
+    public DeviceController(DeviceService deviceService, DeviceConverter deviceConverter) {
         this.deviceService = deviceService;
-        this.deviceManagerService = deviceManagerService;
+        this.deviceConverter = deviceConverter;
     }
 
     @PostMapping
-    public ResponseEntity<?> registerDevice(@RequestParam String name, @RequestParam String ipAddress) {
-        DeviceDTO savedDTO = new DeviceDTO();
-        savedDTO.setName(name);
-        savedDTO.setIpAddress(ipAddress);
-
-        try {
-            // Save the device and receive the updated DTO
-            savedDTO = deviceService.saveDevice(savedDTO);
-            deviceManagerService.registerDevice(savedDTO);
-
-            // Attempt to update the device name on the device
-            boolean nameUpdated = deviceService.updateDeviceName(savedDTO.getIpAddress(), savedDTO.getName());
-            if (!nameUpdated) {
-                logger.error("Failed to update device name on the device");
-                return ResponseEntity.internalServerError().body("Failed to update device name on the device");
-            }
-        } catch (Exception e) {
-            // Log the error and return an Internal Server Error response
-            logger.error("Error registering or updating device", e);
-            return ResponseEntity.internalServerError().build();
+    public ResponseEntity<DeviceEntity> registerDevice(@RequestBody Device device) {
+        if (!isValidDevice(device)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
-        // Build the URI for the newly created resource
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(savedDTO.getId())
-                .toUri();
-
-        // Return the response entity with the location header and the saved DTO
-        return ResponseEntity.created(location).body(savedDTO);
+        try {
+            DeviceEntity createdDeviceEntity = deviceService.registerDevice(deviceConverter.mapDeviceEntityToModel(device));
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdDeviceEntity);
+        } catch (DeviceRegistrationException e) {
+            logger.error("Error registering device", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (Exception e) {
+            logger.error("Unexpected error", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
-
 
     @GetMapping
     public ResponseEntity<List<DeviceEntity>> getAllDevices() {
@@ -72,5 +56,15 @@ public class DeviceController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(devices);
+    }
+
+    @DeleteMapping
+    public void deleteDevice(@RequestParam String id) {
+        deviceService.deleteDeviceById(Long.parseLong(id));
+    }
+
+    private boolean isValidDevice(Device device) {
+        return device != null && device.getName() != null && !device.getName().isEmpty()
+                && device.getIpAddress() != null && !device.getIpAddress().isEmpty();
     }
 }

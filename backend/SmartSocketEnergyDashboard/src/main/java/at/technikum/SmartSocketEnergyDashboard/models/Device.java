@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Device {
+    private Long id;
     private String name;
     private String ipAddress;
 }

@@ -12,4 +12,16 @@ public class DeviceDataLogger {
     public void logDeviceData(DeviceDTO deviceDTO) {
         logger.info(deviceDTO.toString());
     }
+
+    public void logError(String error, Throwable cause) {
+        logger.error(error, cause);
+    }
+
+    public void logInfo(String message, Object... args) {
+        logger.info(message, args);
+    }
+
+    public void logWarning(String message, Object... args) {
+        logger.warn(message, args);
+    }
 }
