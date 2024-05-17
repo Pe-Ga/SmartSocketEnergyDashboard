@@ -13,4 +13,5 @@ public class Device {
     private Long id;
     private String name;
     private String ipAddress;
+    private boolean powerOn;
 }

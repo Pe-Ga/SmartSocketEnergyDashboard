@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "devices")
@@ -22,4 +23,7 @@ public class DeviceEntity {
 
     @Column(name = "ip_address", nullable = false, unique = true)
     private String ipAddress;
+    @Column(name = "power", nullable = false)
+    @ColumnDefault("true")
+    private boolean powerOn;
 }
