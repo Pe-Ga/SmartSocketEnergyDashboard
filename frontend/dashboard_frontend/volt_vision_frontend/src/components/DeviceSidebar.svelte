@@ -52,7 +52,7 @@
 <style>
 
     .device-sidebar {
-        background: #b4e84d;
+        background: #e6eb75;
         padding: 1em;
         box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         height: 100%;
