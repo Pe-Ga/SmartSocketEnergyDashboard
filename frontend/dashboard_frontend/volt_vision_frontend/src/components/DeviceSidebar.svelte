@@ -33,13 +33,14 @@
             showForm = false;
         }
     }
+
 </script>
 
 <aside class="device-sidebar">
     <h3>Registered Devices</h3>
     <div class="device-section">
         {#each devices as device}
-            <DeviceCard device={device} imageUrl={imageUrl} title={title} /> <!-- Use DeviceCard here -->
+            <DeviceCard device={device} imageUrl={imageUrl} title={title} />
         {/each}
     </div>
     <button type="button" id="register-device-button" on:click={registerDevice}>Add New Device</button>
@@ -51,15 +52,10 @@
 <style>
 
     .device-sidebar {
-        /*
-        flex: 0 0 15em; /* Change 15em to your desired minimum width
-        width: 10em;
-        height: 100vh;
-        overflow-y: auto;
-        */
-        background: #f4f4f8;
+        background: #e6eb75;
         padding: 1em;
         box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        height: 100%;
     }
 
     #register-device-button {

@@ -22,12 +22,19 @@
 
 <style>
     .body {
+        background-color: lightseagreen;
+        broder-radius: 25px;
         display: grid;
         grid-template-areas:
         'header header header header'
         'aside main main main'
         'footer footer footer footer';
         gap: 0.5em;
+    }
+
+    aside {
+        border-radius: 50px;
+        height: 100%;
     }
 
     header, footer {
